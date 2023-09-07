@@ -10,7 +10,7 @@ import path from 'path';
 import * as fs from 'fs';
 import { HttpError } from '../utils/error.util';
 
-@Controller('USER_CONTROLLER')
+@Controller()
 export class UserController {
   constructor(private readonly userService: UserService) { }
 

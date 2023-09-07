@@ -1,8 +1,7 @@
 
 import { Injectable } from '@nestjs/common';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, UpdateResult } from 'typeorm';
 import { User } from './user.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 import { IUserId, IUserUpdate, IUserUploadImage, IUserUsername } from './user.type';
 import { ERRORS, HttpError } from '../utils/error.util';
 import { IUserChangePassword } from '../auth/auth.type';
@@ -12,10 +11,6 @@ import * as fs from 'fs';
 import * as sharp from 'sharp';
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>
-  ) { }
-
   public async getOneById(data: IUserId): Promise<User | null> {
     return User.findOneBy({ id: data.id });
   }
