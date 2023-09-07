@@ -11,6 +11,7 @@ export interface IUserChangePassword {
   password: string;
   repeatPassword: string;
 }
+
 export interface IUserSignIn {
   username: string;
   password: string;

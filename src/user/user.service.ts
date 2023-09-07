@@ -3,11 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IUserId, IUserUpdate, IUserUsername } from './user.type';
+import { IUserId, IUserUpdate, IUserUploadImage, IUserUsername } from './user.type';
 import { ERRORS, HttpError } from '../utils/error.util';
 import { IUserChangePassword } from '../auth/auth.type';
 import { compare } from 'bcrypt';
 import { hashPassword } from '../utils/auth.util';
+import * as fs from 'fs';
+import * as sharp from 'sharp';
 @Injectable()
 export class UserService {
   constructor(
@@ -60,4 +62,30 @@ export class UserService {
     return User.delete({ id: data.id });
   }
 
+  public async uploadImage(data: IUserUploadImage): Promise<void> {
+    const fileMimetype = '.' + data.image.mimetype.split('/')[1];
+    if (fileMimetype != '.jpeg' && fileMimetype != '.png' && fileMimetype != '.jpg') {
+      throw new HttpError(400, 'Invalid file type');
+    }
+    const imageDirectory = `./uploads`;
+    if (!fs.existsSync(imageDirectory)) {
+      fs.mkdirSync(imageDirectory);
+    }
+
+
+    const originalImagePath = `${imageDirectory}/${data.id}-original${fileMimetype}'}`;
+    fs.writeFileSync(originalImagePath, data.image.buffer);
+
+    const sizes = [
+      { suffix: 'large', width: 800, height: 800 },
+      { suffix: 'medium', width: 400, height: 400 },
+      { suffix: 'small', width: 200, height: 200 },
+    ];
+
+    for (const size of sizes) {
+      await sharp(data.image.buffer)
+        .resize(size.width, size.height)
+        .toFile(`${imageDirectory}/${data.id}-${size.suffix}${fileMimetype}`);
+    }
+  }
 }

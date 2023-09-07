@@ -18,3 +18,7 @@ export interface IUser {
   token?: string;
 }
 
+export interface IUserUploadImage {
+  id: string;
+  image: any;
+}

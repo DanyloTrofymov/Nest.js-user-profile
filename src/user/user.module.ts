@@ -7,9 +7,14 @@ import { ExistsMiddleware } from '../middleware/isExists.middleware';
 import { AuthMiddleware } from '../middleware/auth.middlewate';
 import { ValidateBodyMiddleware } from '../middleware/validateBody.middleware';
 import { userSchema } from '../utils/validationSchema';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User]),
+  MulterModule.register({
+    dest: './uploads', 
+  }),
+  ],
   controllers: [UserController],
   providers: [UserService],
 })
