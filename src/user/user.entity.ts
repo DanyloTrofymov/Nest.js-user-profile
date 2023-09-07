@@ -3,9 +3,7 @@ import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
-  OneToMany,
 } from 'typeorm';
-// eslint-disable-next-line import/no-cycle
 
 @Entity()
 export class User extends BaseEntity {
@@ -18,7 +16,7 @@ export class User extends BaseEntity {
   @Column({ nullable: false })
   password: string;
 
-  @Column({ nullable: false })
+  @Column({ unique: true, nullable: false })
   email: string;
 
   @Column({ type: 'boolean', default: false })

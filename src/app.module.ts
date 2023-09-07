@@ -1,16 +1,25 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UserService } from './services/user.service';
-import { UserController } from './controllers/user.controller';
-
-import { DatabaseModule } from './modules/database.module';
+import { UserService } from './user/user.service';
+import { UserController } from './user/user.controller';
+import { DatabaseModule } from './database/database.module';
+import { TryCatchMiddleware } from './middleware/tryCatch.middleware';
+import { APP_FILTER } from '@nestjs/core';
+import { ErrorHandler } from './middleware/errorHandler.moddleware';
 
 @Module({
   imports: [
     DatabaseModule,
   ],
   controllers: [AppController, UserController],
-  providers: [AppService, UserService],
+  providers: [UserService, TryCatchMiddleware,
+    {
+      provide: APP_FILTER,
+      useClass: ErrorHandler,
+    },],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(TryCatchMiddleware).forRoutes('*');
+  }
+}
