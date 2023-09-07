@@ -5,28 +5,10 @@ export interface IUserId {
 export interface IUserUsername {
   username: string;
 }
-
-export interface IUserSignup {
-  username: string;
-  password: string;
-  email: string;
-  repeatPassword: string;
-}
-
-export interface IUserChangePassword {
-  id: string;
-  oldPassword: string;
-  password: string;
-  repeatPassword: string;
-}
 export interface IUserUpdate {
   id: string;
   username: string;
   email: string;
-}
-export interface IUserLogin {
-  username: string;
-  password: string;
 }
 
 export interface IUser {
@@ -36,9 +18,3 @@ export interface IUser {
   token?: string;
 }
 
-export interface IUserRestorePassword {
-  id: string;
-  token: string;
-  password: string;
-  repeatPassword: string;
-}
