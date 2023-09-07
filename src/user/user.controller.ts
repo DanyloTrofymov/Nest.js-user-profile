@@ -14,11 +14,6 @@ export class UserController {
     return await this.userService.getOneById({ id });
   }
 
-  @Get(':username')
-  async getOneByUsername(@Param('username') username: string): Promise<User | null> {
-    return await this.userService.getOneByUsername({ username });
-  }
-
   @Delete('delete/:id')
   async deleteOne(@Param('id') id: string): Promise<DeleteResult> {
     return await this.userService.deleteOne({ id });

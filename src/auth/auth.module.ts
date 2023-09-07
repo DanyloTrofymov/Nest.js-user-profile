@@ -13,6 +13,6 @@ import { userSchema } from '../utils/validationSchema';
 })
 export class AuthModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(ValidateBodyMiddleware.forSchema(userSchema)).forRoutes('your-route');
+    consumer.apply(ValidateBodyMiddleware.forSchema(userSchema)).forRoutes('*');
   }
 }
