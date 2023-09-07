@@ -1,6 +1,6 @@
 
 import { DataSource } from 'typeorm';
-import { User } from '../entities/user.entity';
+import { User } from '../user/user.entity';
 export const databaseProviders = [
   {
     provide: 'DATA_SOURCE',
@@ -12,7 +12,7 @@ export const databaseProviders = [
         database: process.env.POSTGRES_DB,
         username: process.env.POSTGRES_USER,
         password: process.env.POSTGRES_PASSWORD,
-        entities: [ User ],
+        entities: [User],
         synchronize: true
       });
 
