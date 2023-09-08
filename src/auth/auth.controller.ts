@@ -18,7 +18,7 @@ export class AuthController {
   async confirm(@Param('token') token: string): Promise<IUser> {
     return await this.authService.emailConfirmation(token)
   }
-  @Post('forgot-password')
+  @Get('forgot-password')
   async forgotPassword(@Body() email: string): Promise<IUser> {
     return await this.authService.forgotPassword(email);
   }
