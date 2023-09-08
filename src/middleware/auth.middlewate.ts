@@ -10,7 +10,9 @@ export class AuthMiddleware implements NestMiddleware {
       if (err) {
         throw new HttpError(403, 'Auth error', ERRORS.BAD_TOKEN);
       }
+
       if (!user) {
+        console.log(123)
         throw new HttpError(403, 'Auth error', ERRORS.UNAUTHORIZED);
       }
 

@@ -8,7 +8,7 @@ import { generateToken, hashPassword } from '../utils/auth.util';
 import { TemplateType, sendEmail } from '../utils/mailer.util';
 import { IUser, IUserId } from '../user/user.type';
 import { UserService } from '../user/user.service';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -35,7 +35,7 @@ export class AuthService {
     const responce = User.create({ ...data });
     await responce.save();
     const token = generateToken(responce);
-    const mailUrl = `${process.env.FRONTEND_URL}/confirmation/${token}`;
+    const mailUrl = `${process.env.FRONTEND_URL}/auth/confirmation/${token}`;
     await sendEmail(data.email, TemplateType.Confirm, mailUrl);
     const user = {
       username: responce.username,
@@ -55,7 +55,7 @@ export class AuthService {
     }
     if (responce.isActive === false) {
       const token = generateToken(responce);
-      const mailUrl = `${process.env.FRONTEND_URL}/confirmation/${token}`;
+      const mailUrl = `${process.env.FRONTEND_URL}/auth/confirmation/${token}`;
       await sendEmail(responce.email, TemplateType.Confirm, mailUrl);
       throw new HttpError(403, 'Inactive account. Check mail', ERRORS.UNAUTHORIZED);
     }
@@ -77,7 +77,7 @@ export class AuthService {
       throw new HttpError(400, 'User not found');
     }
     const token = generateToken(user);
-    const mailUrl = `${process.env.FRONTEND_URL}/forgot-password/${token}`;
+    const mailUrl = `${process.env.FRONTEND_URL}/auth/forgot-password/${token}`;
     await sendEmail(email, TemplateType.RestorePassword, mailUrl);
     return user;
   }

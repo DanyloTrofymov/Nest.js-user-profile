@@ -1,5 +1,5 @@
 import { hash, genSalt } from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import { ERRORS, HttpError } from './error.util';
 import { User } from '../user/user.entity';
 

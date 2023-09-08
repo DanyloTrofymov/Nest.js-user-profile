@@ -8,6 +8,7 @@ import { AuthMiddleware } from '../middleware/auth.middlewate';
 import { ValidateBodyMiddleware } from '../middleware/validateBody.middleware';
 import { userSchema } from '../utils/validationSchema';
 import { MulterModule } from '@nestjs/platform-express';
+import { BearerStrategy } from 'src/auth/bearer.stratrgy';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User]),
@@ -16,13 +17,13 @@ import { MulterModule } from '@nestjs/platform-express';
   }),
   ],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, BearerStrategy],
 })
 
 export class UserModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(ExistsMiddleware.forModel(User)).forRoutes('*');
-    consumer.apply(AuthMiddleware).forRoutes('*');
-    consumer.apply(ValidateBodyMiddleware.forSchema(userSchema)).forRoutes('update/:id', 'change-password/:id');
+    consumer.apply(ExistsMiddleware.forModel(User)).forRoutes('user/*');
+    consumer.apply(AuthMiddleware).forRoutes('user/*');
+    consumer.apply(ValidateBodyMiddleware.forSchema(userSchema)).forRoutes('user/update/:id', 'user/change-password/:id');
   }
 }

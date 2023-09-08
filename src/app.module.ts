@@ -6,6 +6,8 @@ import { UserModule } from './user/user.module';
 import { UserController } from './user/user.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/user.entity';
+import { AuthController } from './auth/auth.controller';
+import { AuthService } from './auth/auth.service';
 
 @Module({
   imports: [
@@ -18,13 +20,13 @@ import { User } from './user/user.entity';
         username: process.env.POSTGRES_USER,
         password: process.env.POSTGRES_PASSWORD,
         entities: [User],
-        synchronize: false
+        synchronize: true
       })
     }),
     UserModule
   ],
-  controllers: [UserController],
-  providers: [UserService,
+  controllers: [UserController, AuthController],
+  providers: [UserService, AuthService,
     {
       provide: APP_FILTER,
       useClass: ErrorHandler,

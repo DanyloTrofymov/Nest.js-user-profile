@@ -14,6 +14,7 @@ export class ExistsMiddleware<T extends BaseEntity> implements NestMiddleware {
 
   async use(req: Request, res: Response, next: NextFunction) {
     try {
+
       const { id } = req.params;
       const item = await this.model.findOne({ where: { id } as unknown as FindOptionsWhere<T> });
       if (!item) {

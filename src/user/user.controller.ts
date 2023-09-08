@@ -6,11 +6,11 @@ import { DeleteResult, UpdateResult } from 'typeorm';
 import { IUserUpdate } from './user.type';
 import { IUserChangePassword } from 'src/auth/auth.type';
 import { FileInterceptor } from '@nestjs/platform-express';
-import path from 'path';
+import * as path from 'path';
 import * as fs from 'fs';
 import { HttpError } from '../utils/error.util';
 
-@Controller()
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
@@ -42,7 +42,7 @@ export class UserController {
   @Get('/image:filename')
   async getImage(@Param('filename') image: string, @Res() res: Response) {
     const imagePath = path.join('./uploads/', image);
-  
+
     if (fs.existsSync(imagePath)) {
       throw new HttpError(404, 'Image not found');
     }

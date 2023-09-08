@@ -1,9 +1,9 @@
-import { Controller, Post, Body, Patch, Param } from '@nestjs/common';
+import { Controller, Post, Body, Patch, Param, Get } from '@nestjs/common';
 import { IUserRestorePassword, IUserSignIn, IUserSignUp } from './auth.type';
 import { AuthService } from './auth.service';
 import { IUser } from '../user/user.type';
 
-@Controller('Auth_CONTROLLER')
+@Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
   @Post('signup')
@@ -14,7 +14,7 @@ export class AuthController {
   async signIn(@Body() data: IUserSignIn): Promise<IUser> {
     return await this.authService.signIn(data);
   }
-  @Patch('confirm/:token')
+  @Get('confirmation/:token')
   async confirm(@Param('token') token: string): Promise<IUser> {
     return await this.authService.emailConfirmation(token)
   }

@@ -5,14 +5,15 @@ import { AuthService } from './auth.service';
 import { User } from '../user/user.entity';
 import { ValidateBodyMiddleware } from '../middleware/validateBody.middleware';
 import { userSchema } from '../utils/validationSchema';
+import { BearerStrategy } from './bearer.stratrgy';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, BearerStrategy],
 })
 export class AuthModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(ValidateBodyMiddleware.forSchema(userSchema)).forRoutes('*');
+    consumer.apply(ValidateBodyMiddleware.forSchema(userSchema)).forRoutes('auth/*');
   }
 }
