@@ -2,13 +2,14 @@
 import { Injectable } from '@nestjs/common';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { User } from './user.entity';
-import { IUserId, IUserUpdate, IUserUploadImage, IUserUsername } from './user.type';
+import { IUserId, IUserUpdate, IUserUsername } from './user.type';
 import { ERRORS, HttpError } from '../utils/error.util';
 import { IUserChangePassword } from '../auth/auth.type';
 import { compare } from 'bcrypt';
 import { hashPassword } from '../utils/auth.util';
 import * as fs from 'fs';
 import * as sharp from 'sharp';
+
 @Injectable()
 export class UserService {
   public async getOneById(data: IUserId): Promise<User | null> {
@@ -18,7 +19,6 @@ export class UserService {
   public async getOneByUsername(data: IUserUsername): Promise<User | null> {
     return User.findOneBy({ username: data.username });
   }
-
 
   public async updateUser(data: IUserUpdate): Promise<UpdateResult> {
     const user = await this.getOneById(data);
@@ -57,19 +57,18 @@ export class UserService {
     return User.delete({ id: data.id });
   }
 
-  public async uploadImage(data: IUserUploadImage): Promise<void> {
-    const fileMimetype = '.' + data.image.mimetype.split('/')[1];
+  public async uploadImage(id: string, image: any): Promise<object> {
+    const fileMimetype = '.' + image.mimetype.split('/')[1];
     if (fileMimetype != '.jpeg' && fileMimetype != '.png' && fileMimetype != '.jpg') {
       throw new HttpError(400, 'Invalid file type');
     }
-    const imageDirectory = `./uploads`;
-    if (!fs.existsSync(imageDirectory)) {
-      fs.mkdirSync(imageDirectory);
+    const imagePath = `./uploads`;
+    if (!fs.existsSync(imagePath)) {
+      fs.mkdirSync(imagePath);
     }
 
-
-    const originalImagePath = `${imageDirectory}/${data.id}-original${fileMimetype}'}`;
-    fs.writeFileSync(originalImagePath, data.image.buffer);
+    const originalImagePath = `${imagePath}/${id}-original${fileMimetype}`;
+    fs.writeFileSync(originalImagePath, image.buffer);
 
     const sizes = [
       { suffix: 'large', width: 800, height: 800 },
@@ -78,9 +77,24 @@ export class UserService {
     ];
 
     for (const size of sizes) {
-      await sharp(data.image.buffer)
+      await sharp(image.buffer)
         .resize(size.width, size.height)
-        .toFile(`${imageDirectory}/${data.id}-${size.suffix}${fileMimetype}`);
+        .toFile(`${imagePath}/${id}-${size.suffix}${fileMimetype}`);
     }
+
+    return { message: 'Image uploaded' };
+  }
+
+  public async getImage(image: string): Promise<fs.ReadStream> {
+    const imagePath = `./uploads/${image}`;
+
+    if (!fs.existsSync(imagePath)) {
+      throw new HttpError(404, 'Image not found');
+    }
+
+    const fileStream = fs.createReadStream(imagePath)
+
+
+    return fileStream;
   }
 }

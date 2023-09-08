@@ -1,14 +1,12 @@
-import { Controller, Delete, Get, Param, Patch, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
-import { Response } from 'express';
+import { Controller, Delete, Get, Param, Patch, Res, UploadedFile, UseInterceptors, Req } from '@nestjs/common';
+import { Response, Request } from 'express';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { IUserUpdate } from './user.type';
 import { IUserChangePassword } from 'src/auth/auth.type';
-import { FileInterceptor } from '@nestjs/platform-express';
-import * as path from 'path';
-import * as fs from 'fs';
-import { HttpError } from '../utils/error.util';
+import { FileInterceptor } from '@nestjs/platform-express';;
+
 
 @Controller('user')
 export class UserController {
@@ -33,22 +31,17 @@ export class UserController {
   async changePassword(@Param('id') id: string, data: IUserChangePassword): Promise<UpdateResult> {
     return await this.userService.changePassword({ id, ...data });
   }
-  @Patch('upload-image/:id')
+
+  @Patch('upload-image')
   @UseInterceptors(FileInterceptor('image'))
-  async uploadImage(@Param('id') id: string, @UploadedFile() image): Promise<void> {
-    return await this.userService.uploadImage({ id, image });
+  async uploadImage(@UploadedFile() image, @Req() req: Request): Promise<object> {
+    const id = req?.user.id;
+    return await this.userService.uploadImage(id, image);
   }
 
-  @Get('/image:filename')
-  async getImage(@Param('filename') image: string, @Res() res: Response) {
-    const imagePath = path.join('./uploads/', image);
-
-    if (fs.existsSync(imagePath)) {
-      throw new HttpError(404, 'Image not found');
-    }
-
-    const fileStream = fs.createReadStream(imagePath)
-
+  @Get('/image/:filename')
+  async getImage(@Param('filename') image: string, @Res() res: Response): Promise<void> {
+    const fileStream = await this.userService.getImage(image);
     res.setHeader('Content-Type', 'image/jpeg');
     fileStream.pipe(res);
   }

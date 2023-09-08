@@ -17,8 +17,3 @@ export interface IUser {
   isActive?: boolean;
   token?: string;
 }
-
-export interface IUserUploadImage {
-  id: string;
-  image: any;
-}

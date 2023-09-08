@@ -25,6 +25,7 @@ export class AuthService {
     return responce;
   }
 
+
   async signUp(data: IUserSignUp): Promise<IUser> {
     const find = await this.userService.getOneByUsername(data);
     if (find !== null) {
